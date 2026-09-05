@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: catalog-service
+  threads:
+    virtual:
+      enabled: true
+
+  datasource:
+    url: ${DB_URL:jdbc:mariadb://localhost:3306/pcbuilder_catalog}
+    username: ${DB_USERNAME:username}
+    password: ${DB_PASSWORD:root1234}
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MariaDBDialect
+
+server:
+  port: 8081
