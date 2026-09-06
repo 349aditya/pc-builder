@@ -1,6 +1,7 @@
 package com.pcbuilder.catalog.service.impl;
 
-import com.pcbuilder.catalog.entity.Component;
+import com.pcbuilder.catalog.dto.ComponentDto;
+import com.pcbuilder.catalog.mapper.ComponentMapper;
 import com.pcbuilder.catalog.repository.ComponentRepository;
 import com.pcbuilder.catalog.service.ComponentService;
 import org.springframework.data.domain.Page;
@@ -22,35 +23,46 @@ public class ComponentServiceImpl implements ComponentService {
     }
 
     @Override
-    public Page<Component> getAllComponents(Pageable pageable) {
-        return componentRepository.findAll(pageable);
+    public Page<ComponentDto> getAllComponents(Pageable pageable) {
+        return componentRepository.findAll(pageable)
+                .map(ComponentMapper::toDto);
     }
 
     @Override
-    public Component getComponentById(Long id) {
+    public ComponentDto getComponentById(Long id) {
         return componentRepository.findById(id)
+                .map(ComponentMapper::toDto)
                 .orElseThrow(() -> new NoSuchElementException("Component not found with ID: " + id));
     }
 
     @Override
-    public List<Component> searchComponents(String keyword) {
+    public List<ComponentDto> searchComponents(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
             return List.of();
         }
-        return componentRepository.findByNameContainingIgnoreCaseOrBrandContainingIgnoreCase(keyword, keyword);
+        return componentRepository.findByNameContainingIgnoreCaseOrBrandContainingIgnoreCase(keyword, keyword)
+                .stream()
+                .map(ComponentMapper::toDto)
+                .toList();
     }
 
     @Override
-    public List<Component> getComponentsByBrand(String brand) {
+    public List<ComponentDto> getComponentsByBrand(String brand) {
         if (brand == null || brand.trim().isEmpty()) {
             return List.of();
         }
-        return componentRepository.findByBrandIgnoreCase(brand);
+        return componentRepository.findByBrandIgnoreCase(brand)
+                .stream()
+                .map(ComponentMapper::toDto)
+                .toList();
     }
 
     @Override
-    public List<Component> getLowStockComponents(Integer threshold) {
+    public List<ComponentDto> getLowStockComponents(Integer threshold) {
         int limit = (threshold != null) ? threshold : 5;
-        return componentRepository.findByStockQuantityLessThan(limit);
+        return componentRepository.findByStockQuantityLessThan(limit)
+                .stream()
+                .map(ComponentMapper::toDto)
+                .toList();
     }
 }

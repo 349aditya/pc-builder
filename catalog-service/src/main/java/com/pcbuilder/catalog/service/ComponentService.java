@@ -1,20 +1,20 @@
 package com.pcbuilder.catalog.service;
 
-import com.pcbuilder.catalog.entity.Component;
+import com.pcbuilder.catalog.dto.ComponentDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface ComponentService {
+    Page<ComponentDto> getAllComponents(Pageable pageable);
 
-    Page<Component> getAllComponents(Pageable pageable);
+    ComponentDto getComponentById(Long id);
 
-    Component getComponentById(Long id);
+    List<ComponentDto> searchComponents(String keyword);
 
-    List<Component> searchComponents(String keyword);
+    List<ComponentDto> getComponentsByBrand(String brand);
 
-    List<Component> getComponentsByBrand(String brand);
+    List<ComponentDto> getLowStockComponents(Integer threshold);
 
-    List<Component> getLowStockComponents(Integer threshold);
 }
