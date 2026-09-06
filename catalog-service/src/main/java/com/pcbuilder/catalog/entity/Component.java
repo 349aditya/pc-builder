@@ -2,9 +2,8 @@ package com.pcbuilder.catalog.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.NoArgsConstructor;
-import lombok.AccessLevel;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -17,7 +16,7 @@ import java.time.LocalDateTime;
 @DiscriminatorColumn(name = "category_type", discriminatorType = DiscriminatorType.STRING)
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public abstract class Component {
 
     @Id

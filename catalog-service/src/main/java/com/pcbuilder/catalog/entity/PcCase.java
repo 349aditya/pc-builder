@@ -1,14 +1,9 @@
 package com.pcbuilder.catalog.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-import jakarta.persistence.Table;
-import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.NoArgsConstructor;
-import lombok.AccessLevel;
+import lombok.Setter;
 
 @Entity
 @Table(name = "pc_cases")
@@ -16,7 +11,7 @@ import lombok.AccessLevel;
 @DiscriminatorValue("CASE")
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class PcCase extends Component {
 
     @Column(name = "max_gpu_length_mm", nullable = false)

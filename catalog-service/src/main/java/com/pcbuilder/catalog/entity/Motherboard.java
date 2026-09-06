@@ -16,7 +16,7 @@ import lombok.AccessLevel;
 @DiscriminatorValue("MOTHERBOARD")
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class Motherboard extends Component {
 
     @Column(name = "socket_type", nullable = false)

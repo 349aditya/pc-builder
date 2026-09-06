@@ -1,14 +1,9 @@
 package com.pcbuilder.catalog.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-import jakarta.persistence.Table;
-import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.NoArgsConstructor;
-import lombok.AccessLevel;
+import lombok.Setter;
 
 @Entity
 @Table(name = "gpus")
@@ -16,7 +11,7 @@ import lombok.AccessLevel;
 @DiscriminatorValue("GPU")
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class Gpu extends Component {
 
     @Column(nullable = false)

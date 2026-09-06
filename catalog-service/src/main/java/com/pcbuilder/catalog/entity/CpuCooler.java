@@ -15,7 +15,7 @@ import java.util.Set;
 @DiscriminatorValue("COOLER")
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class CpuCooler extends Component {
 
     @Column(name = "cooler_type", nullable = false)
