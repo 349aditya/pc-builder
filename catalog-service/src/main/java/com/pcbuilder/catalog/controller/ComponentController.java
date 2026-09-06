@@ -1,6 +1,6 @@
 package com.pcbuilder.catalog.controller;
 
-import com.pcbuilder.catalog.entity.Component;
+import com.pcbuilder.catalog.dto.ComponentDto;
 import com.pcbuilder.catalog.service.ComponentService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,40 +23,32 @@ public class ComponentController {
         this.componentService = componentService;
     }
 
-
     @GetMapping
-    public ResponseEntity<Page<Component>> getAllComponents(
+    public ResponseEntity<Page<ComponentDto>> getAllComponents(
             @PageableDefault(size = 12, sort = "name") Pageable pageable) {
-        Page<Component> components = componentService.getAllComponents(pageable);
-        return ResponseEntity.ok(components);
+        return ResponseEntity.ok(componentService.getAllComponents(pageable));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Component> getComponentById(@PathVariable Long id) {
-        Component component = componentService.getComponentById(id);
-        return ResponseEntity.ok(component);
+    public ResponseEntity<ComponentDto> getComponentById(@PathVariable Long id) {
+        return ResponseEntity.ok(componentService.getComponentById(id));
     }
 
-
     @GetMapping("/search")
-    public ResponseEntity<List<Component>> searchComponents(@RequestParam String keyword) {
-        List<Component> results = componentService.searchComponents(keyword);
-        return ResponseEntity.ok(results);
+    public ResponseEntity<List<ComponentDto>> searchComponents(@RequestParam String keyword) {
+        return ResponseEntity.ok(componentService.searchComponents(keyword));
     }
 
     @GetMapping("/brand/{brand}")
-    public ResponseEntity<List<Component>> getComponentsByBrand(@PathVariable String brand) {
-        List<Component> results = componentService.getComponentsByBrand(brand);
-        return ResponseEntity.ok(results);
+    public ResponseEntity<List<ComponentDto>> getComponentsByBrand(@PathVariable String brand) {
+        return ResponseEntity.ok(componentService.getComponentsByBrand(brand));
     }
 
     @GetMapping("/low-stock")
-    public ResponseEntity<List<Component>> getLowStockComponents(
+    public ResponseEntity<List<ComponentDto>> getLowStockComponents(
             @RequestParam(required = false) Integer threshold) {
-        List<Component> results = componentService.getLowStockComponents(threshold);
-        return ResponseEntity.ok(results);
+        return ResponseEntity.ok(componentService.getLowStockComponents(threshold));
     }
-
 
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<Map<String, Object>> handleNoSuchElementException(NoSuchElementException ex) {
