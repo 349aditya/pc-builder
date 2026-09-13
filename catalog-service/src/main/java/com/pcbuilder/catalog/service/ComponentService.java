@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface ComponentService {
+
     Page<ComponentDto> getAllComponents(Pageable pageable);
 
     ComponentDto getComponentById(Long id);
@@ -17,4 +18,5 @@ public interface ComponentService {
 
     List<ComponentDto> getLowStockComponents(Integer threshold);
 
+    List<ComponentDto> getComponentsBulk(List<Long> componentIds);
 }

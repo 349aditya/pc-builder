@@ -65,4 +65,15 @@ public class ComponentServiceImpl implements ComponentService {
                 .map(ComponentMapper::toDto)
                 .toList();
     }
+
+    @Override
+    public List<ComponentDto> getComponentsBulk(List<Long> componentIds) {
+        if (componentIds == null || componentIds.isEmpty()) {
+            return List.of();
+        }
+        return componentRepository.findAllById(componentIds)
+                .stream()
+                .map(ComponentMapper::toDto)
+                .toList();
+    }
 }

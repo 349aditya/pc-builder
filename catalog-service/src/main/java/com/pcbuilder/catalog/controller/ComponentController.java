@@ -1,5 +1,6 @@
 package com.pcbuilder.catalog.controller;
 
+import com.pcbuilder.catalog.dto.BulkLookupRequest;
 import com.pcbuilder.catalog.dto.ComponentDto;
 import com.pcbuilder.catalog.service.ComponentService;
 import org.springframework.data.domain.Page;
@@ -48,6 +49,15 @@ public class ComponentController {
     public ResponseEntity<List<ComponentDto>> getLowStockComponents(
             @RequestParam(required = false) Integer threshold) {
         return ResponseEntity.ok(componentService.getLowStockComponents(threshold));
+    }
+
+
+    @PostMapping("/bulk")
+    public ResponseEntity<List<ComponentDto>> getComponentsBulk(@RequestBody BulkLookupRequest request) {
+        List<Long> ids = (request != null && request.componentIds() != null)
+                ? request.componentIds()
+                : List.of();
+        return ResponseEntity.ok(componentService.getComponentsBulk(ids));
     }
 
     @ExceptionHandler(NoSuchElementException.class)
