@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/api/components")
@@ -26,8 +27,14 @@ public class ComponentController {
 
     @GetMapping
     public ResponseEntity<Page<ComponentDto>> getAllComponents(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String brand,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
             @PageableDefault(size = 12, sort = "name") Pageable pageable) {
-        return ResponseEntity.ok(componentService.getAllComponents(pageable));
+        return ResponseEntity.ok(componentService.findComponents(
+                category, brand, keyword, minPrice, maxPrice, pageable));
     }
 
     @GetMapping("/{id}")

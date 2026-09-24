@@ -5,10 +5,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.math.BigDecimal;
 
 public interface ComponentService {
 
     Page<ComponentDto> getAllComponents(Pageable pageable);
+
+    Page<ComponentDto> findComponents(String category, String brand, String keyword,
+                                      BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable);
+
+    Page<ComponentDto> getComponentsByCategory(String category, Pageable pageable);
 
     ComponentDto getComponentById(Long id);
 
