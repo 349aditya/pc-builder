@@ -36,26 +36,26 @@ public class CompatibilityContext {
         }
 
         if (request.getCpuId() != null) {
-            this.cpu = (CpuDto) dtoMap.get(request.getCpuId());
+            this.cpu = resolve(dtoMap, request.getCpuId(), CpuDto.class);
         }
         if (request.getMotherboardId() != null) {
-            this.motherboard = (MotherboardDto) dtoMap.get(request.getMotherboardId());
+            this.motherboard = resolve(dtoMap, request.getMotherboardId(), MotherboardDto.class);
         }
         if (request.getGpuId() != null) {
-            this.gpu = (GpuDto) dtoMap.get(request.getGpuId());
+            this.gpu = resolve(dtoMap, request.getGpuId(), GpuDto.class);
         }
         if (request.getCoolerId() != null) {
-            this.cooler = (CpuCoolerDto) dtoMap.get(request.getCoolerId());
+            this.cooler = resolve(dtoMap, request.getCoolerId(), CpuCoolerDto.class);
         }
         if (request.getPsuId() != null) {
-            this.powerSupply = (PowerSupplyDto) dtoMap.get(request.getPsuId());
+            this.powerSupply = resolve(dtoMap, request.getPsuId(), PowerSupplyDto.class);
         }
         if (request.getPcCaseId() != null) {
-            this.pcCase = (PcCaseDto) dtoMap.get(request.getPcCaseId());
+            this.pcCase = resolve(dtoMap, request.getPcCaseId(), PcCaseDto.class);
         }
 
         if (request.getRamSelection() != null && request.getRamSelection().getComponentId() != null) {
-            this.ram = (RamDto) dtoMap.get(request.getRamSelection().getComponentId());
+            this.ram = resolve(dtoMap, request.getRamSelection().getComponentId(), RamDto.class);
             this.ramQuantity = request.getRamSelection().getQuantity() != null ? request.getRamSelection().getQuantity() : 1;
         } else {
             this.ramQuantity = 0;
@@ -63,8 +63,8 @@ public class CompatibilityContext {
 
         if (request.getStorageSelections() != null) {
             for (Selection sel : request.getStorageSelections()) {
-                if (sel.getComponentId() != null) {
-                    StorageDto storageDto = (StorageDto) dtoMap.get(sel.getComponentId());
+                if (sel != null && sel.getComponentId() != null) {
+                    StorageDto storageDto = resolve(dtoMap, sel.getComponentId(), StorageDto.class);
                     if (storageDto != null) {
                         int qty = sel.getQuantity() != null ? sel.getQuantity() : 1;
                         this.storageSelections.add(new ResolvedStorage(storageDto, qty));
@@ -75,8 +75,8 @@ public class CompatibilityContext {
 
         if (request.getCaseFanSelections() != null) {
             for (Selection sel : request.getCaseFanSelections()) {
-                if (sel.getComponentId() != null) {
-                    CaseFanDto fanDto = (CaseFanDto) dtoMap.get(sel.getComponentId());
+                if (sel != null && sel.getComponentId() != null) {
+                    CaseFanDto fanDto = resolve(dtoMap, sel.getComponentId(), CaseFanDto.class);
                     if (fanDto != null) {
                         int qty = sel.getQuantity() != null ? sel.getQuantity() : 1;
                         this.caseFanSelections.add(new ResolvedCaseFan(fanDto, qty));
@@ -84,6 +84,14 @@ public class CompatibilityContext {
                 }
             }
         }
+    }
+
+    private static <T extends ComponentDto> T resolve(Map<Long, ComponentDto> components, Long id, Class<T> type) {
+        ComponentDto component = components.get(id);
+        if (!type.isInstance(component)) {
+            throw new IllegalArgumentException("Component " + id + " must be of type " + type.getSimpleName().replace("Dto", "") + ".");
+        }
+        return type.cast(component);
     }
 
     @Getter
