@@ -32,7 +32,17 @@ POST /api/components/bulk
 ```
 
 `GET /api/components` supports `category`, `brand`, `keyword`, `minPrice`,
-`maxPrice`, `page`, `size`, and `sort` query parameters.
+`maxPrice`, `socketType`, `ramType`, `minWattage`, `maxLengthMm`, `page`,
+`size`, and `sort` query parameters.
+
+Catalog management endpoints:
+
+```text
+POST   /api/components
+PUT    /api/components/{id}
+PATCH  /api/components/{id}/stock
+DELETE /api/components/{id}
+```
 
 ### Compatibility
 
@@ -43,6 +53,8 @@ POST /api/compatibility/check
 The request can contain a partial build. The service validates component
 categories and evaluates socket, RAM, case clearance, storage, fan, and power
 rules.
+Incompatible results also include actionable suggestions for selecting a
+replacement part.
 
 ### Builds
 
