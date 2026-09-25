@@ -34,7 +34,9 @@ public class ComponentServiceImpl implements ComponentService {
 
     @Override
     public Page<ComponentDto> findComponents(String category, String brand, String keyword,
-                                             BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable) {
+                                             BigDecimal minPrice, BigDecimal maxPrice, String socketType,
+                                             String ramType, Integer minWattage, Integer maxLengthMm,
+                                             Pageable pageable) {
         if (minPrice != null && maxPrice != null && minPrice.compareTo(maxPrice) > 0) {
             throw new IllegalArgumentException("minPrice cannot be greater than maxPrice.");
         }
@@ -63,6 +65,26 @@ public class ComponentServiceImpl implements ComponentService {
         if (maxPrice != null) {
             specification = specification.and((root, query, builder) ->
                     builder.lessThanOrEqualTo(root.get("price"), maxPrice));
+        }
+        if (socketType != null && !socketType.isBlank()) {
+            String socket = socketType.trim().toLowerCase(Locale.ROOT);
+            specification = specification.and((root, query, builder) -> builder.or(
+                    builder.equal(builder.lower(builder.treat(root, Cpu.class).get("socketType")), socket),
+                    builder.equal(builder.lower(builder.treat(root, Motherboard.class).get("socketType")), socket)));
+        }
+        if (ramType != null && !ramType.isBlank()) {
+            String memory = ramType.trim().toLowerCase(Locale.ROOT);
+            specification = specification.and((root, query, builder) -> builder.or(
+                    builder.equal(builder.lower(builder.treat(root, Ram.class).get("ramType")), memory),
+                    builder.equal(builder.lower(builder.treat(root, Motherboard.class).get("ramType")), memory)));
+        }
+        if (minWattage != null) {
+            specification = specification.and((root, query, builder) ->
+                    builder.greaterThanOrEqualTo(builder.treat(root, PowerSupply.class).get("wattage"), minWattage));
+        }
+        if (maxLengthMm != null) {
+            specification = specification.and((root, query, builder) ->
+                    builder.lessThanOrEqualTo(builder.treat(root, Gpu.class).get("lengthMm"), maxLengthMm));
         }
         return componentRepository.findAll(specification, pageable).map(ComponentMapper::toDto);
     }
@@ -138,5 +160,56 @@ public class ComponentServiceImpl implements ComponentService {
                 .stream()
                 .map(ComponentMapper::toDto)
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public ComponentDto createComponent(ComponentDto component) {
+        validateCommonFields(component);
+        return ComponentMapper.toDto(componentRepository.save(ComponentMapper.toEntity(component)));
+    }
+
+    @Override
+    @Transactional
+    public ComponentDto updateComponent(Long id, ComponentDto component) {
+        validateCommonFields(component);
+        Component entity = componentRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Component not found with ID: " + id));
+        ComponentMapper.updateEntity(entity, component);
+        return ComponentMapper.toDto(componentRepository.save(entity));
+    }
+
+    @Override
+    @Transactional
+    public ComponentDto updateStock(Long id, Integer stockQuantity) {
+        if (stockQuantity == null || stockQuantity < 0) {
+            throw new IllegalArgumentException("Stock quantity must be zero or greater.");
+        }
+        Component entity = componentRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Component not found with ID: " + id));
+        entity.setStockQuantity(stockQuantity);
+        return ComponentMapper.toDto(componentRepository.save(entity));
+    }
+
+    @Override
+    @Transactional
+    public void deleteComponent(Long id) {
+        Component entity = componentRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Component not found with ID: " + id));
+        componentRepository.delete(entity);
+    }
+
+    private void validateCommonFields(ComponentDto component) {
+        if (component == null || component.getName() == null || component.getName().isBlank()
+                || component.getBrand() == null || component.getBrand().isBlank()
+                || component.getModel() == null || component.getModel().isBlank()) {
+            throw new IllegalArgumentException("Component name, brand, and model are required.");
+        }
+        if (component.getPrice() == null || component.getPrice().signum() < 0) {
+            throw new IllegalArgumentException("Component price must be zero or greater.");
+        }
+        if (component.getStockQuantity() == null || component.getStockQuantity() < 0) {
+            throw new IllegalArgumentException("Stock quantity must be zero or greater.");
+        }
     }
 }

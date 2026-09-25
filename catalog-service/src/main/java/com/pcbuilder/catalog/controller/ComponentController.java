@@ -2,6 +2,7 @@ package com.pcbuilder.catalog.controller;
 
 import com.pcbuilder.catalog.dto.BulkLookupRequest;
 import com.pcbuilder.catalog.dto.ComponentDto;
+import com.pcbuilder.catalog.dto.StockUpdateRequest;
 import com.pcbuilder.catalog.service.ComponentService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.math.BigDecimal;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/components")
@@ -32,9 +34,14 @@ public class ComponentController {
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) BigDecimal minPrice,
             @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(required = false) String socketType,
+            @RequestParam(required = false) String ramType,
+            @RequestParam(required = false) Integer minWattage,
+            @RequestParam(required = false) Integer maxLengthMm,
             @PageableDefault(size = 12, sort = "name") Pageable pageable) {
         return ResponseEntity.ok(componentService.findComponents(
-                category, brand, keyword, minPrice, maxPrice, pageable));
+                category, brand, keyword, minPrice, maxPrice, socketType,
+                ramType, minWattage, maxLengthMm, pageable));
     }
 
     @GetMapping("/{id}")
@@ -67,12 +74,44 @@ public class ComponentController {
         return ResponseEntity.ok(componentService.getComponentsBulk(ids));
     }
 
+    @PostMapping
+    public ResponseEntity<ComponentDto> createComponent(@Valid @RequestBody ComponentDto component) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(componentService.createComponent(component));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ComponentDto> updateComponent(
+            @PathVariable Long id, @Valid @RequestBody ComponentDto component) {
+        return ResponseEntity.ok(componentService.updateComponent(id, component));
+    }
+
+    @PatchMapping("/{id}/stock")
+    public ResponseEntity<ComponentDto> updateStock(
+            @PathVariable Long id, @Valid @RequestBody StockUpdateRequest request) {
+        return ResponseEntity.ok(componentService.updateStock(id, request.stockQuantity()));
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteComponent(@PathVariable Long id) {
+        componentService.deleteComponent(id);
+    }
+
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<Map<String, Object>> handleNoSuchElementException(NoSuchElementException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
                 "error", "Not Found",
                 "message", ex.getMessage(),
                 "status", HttpStatus.NOT_FOUND.value()
+        ));
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return ResponseEntity.badRequest().body(Map.of(
+                "error", "Bad Request",
+                "message", ex.getMessage(),
+                "status", HttpStatus.BAD_REQUEST.value()
         ));
     }
 }

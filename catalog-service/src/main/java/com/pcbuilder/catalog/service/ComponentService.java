@@ -12,7 +12,9 @@ public interface ComponentService {
     Page<ComponentDto> getAllComponents(Pageable pageable);
 
     Page<ComponentDto> findComponents(String category, String brand, String keyword,
-                                      BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable);
+                                      BigDecimal minPrice, BigDecimal maxPrice, String socketType,
+                                      String ramType, Integer minWattage, Integer maxLengthMm,
+                                      Pageable pageable);
 
     Page<ComponentDto> getComponentsByCategory(String category, Pageable pageable);
 
@@ -25,4 +27,12 @@ public interface ComponentService {
     List<ComponentDto> getLowStockComponents(Integer threshold);
 
     List<ComponentDto> getComponentsBulk(List<Long> componentIds);
+
+    ComponentDto createComponent(ComponentDto component);
+
+    ComponentDto updateComponent(Long id, ComponentDto component);
+
+    ComponentDto updateStock(Long id, Integer stockQuantity);
+
+    void deleteComponent(Long id);
 }
