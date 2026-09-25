@@ -64,7 +64,27 @@ public class CompatibilityServiceImpl implements CompatibilityService {
             rule.evaluate(context, result);
         }
 
+        result.getMessages().forEach(message -> result.addSuggestion(suggestionFor(message.getRuleName())));
+
         return result;
+    }
+
+    private String suggestionFor(String ruleName) {
+        return switch (ruleName) {
+            case "CPU_SOCKET_MATCH" -> "Choose a motherboard with the same socket as the selected CPU.";
+            case "COOLER_SOCKET_SUPPORT" -> "Choose a CPU cooler that explicitly supports the selected CPU socket.";
+            case "RAM_GENERATION_MATCH" -> "Choose RAM with the generation supported by the selected motherboard.";
+            case "RAM_SLOT_AND_CAPACITY_LIMIT" -> "Use fewer RAM sticks or a lower total capacity within motherboard limits.";
+            case "GPU_LENGTH_CLEARANCE" -> "Choose a shorter GPU or a case with greater GPU clearance.";
+            case "COOLER_HEIGHT_CLEARANCE" -> "Choose a shorter air cooler or a case with greater cooler clearance.";
+            case "COOLER_RADIATOR_CLEARANCE" -> "Choose a smaller radiator or a case that supports the selected radiator size.";
+            case "PSU_POWER_DEFICIT", "PSU_OVERHEAD_RECOMMENDATION" -> "Choose a PSU with a higher wattage rating and suitable power headroom.";
+            case "M2_SLOTS_DEPLETED" -> "Reduce M.2 drives or choose a motherboard with more M.2 slots.";
+            case "SATA_PORTS_DEPLETED" -> "Reduce SATA drives or choose a motherboard with more SATA ports.";
+            case "CASE_FAN_LIMITS_EXCEEDED" -> "Reduce the fan count or choose a case with more compatible fan mounts.";
+            case "CASE_FORM_FACTOR_MATCH" -> "Choose a case that supports the selected motherboard form factor.";
+            default -> "Review the affected components and replace one with a compatible alternative.";
+        };
     }
 
     private Set<Long> extractComponentIds(CompatibilityRequest request) {
