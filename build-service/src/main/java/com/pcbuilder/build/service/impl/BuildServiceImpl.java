@@ -210,6 +210,7 @@ public class BuildServiceImpl implements BuildService {
         response.setCompatible(evaluation.compatibility().isCompatible());
         response.setEstimatedWattage(evaluation.compatibility().getEstimatedWattage());
         response.setCompatibilityMessages(evaluation.compatibility().getMessages());
+        response.setCompatibilitySuggestions(evaluation.compatibility().getSuggestions());
         response.setCreatedAt(build.getCreatedAt());
         response.setUpdatedAt(build.getUpdatedAt());
 

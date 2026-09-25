@@ -15,6 +15,7 @@ public class BuildResponse {
     private boolean compatible;
     private Integer estimatedWattage;
     private List<CompatibilityMessageDto> compatibilityMessages = new ArrayList<>();
+    private List<String> compatibilitySuggestions = new ArrayList<>();
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
