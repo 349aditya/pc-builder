@@ -1,27 +1,30 @@
-server:
-  port: 8082
-
 spring:
   application:
     name: build-service
+
   threads:
     virtual:
       enabled: true
+
   datasource:
-    url: ${BUILD_DB_URL:jdbc:mariadb://localhost:3306/pcbuilder_builds}
-    username: ${BUILD_DB_USERNAME:username}
-    password: ${BUILD_DB_PASSWORD:root1234}
-    driver-class-name: org.mariadb.jdbc.Driver
+    url: ${BUILD_DB_URL:jdbc:postgresql://localhost:5432/pcbuilder_builds}
+    driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
     open-in-view: false
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MariaDBDialect
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
 app:
   catalog-service:
     url: ${CATALOG_SERVICE_URL:http://localhost:8080}
+
   compatibility-service:
     url: ${COMPATIBILITY_SERVICE_URL:http://localhost:8081}
+
+server:
+  address: 0.0.0.0
+  port: ${PORT:8082}

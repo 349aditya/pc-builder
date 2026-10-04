@@ -1,15 +1,14 @@
 spring:
   application:
     name: catalog-service
+
   threads:
     virtual:
       enabled: true
 
   datasource:
-    url: ${DB_URL:jdbc:mariadb://localhost:3306/pcbuilder_catalog}
-    username: ${DB_USERNAME:username}
-    password: ${DB_PASSWORD:root1234}
-    driver-class-name: org.mariadb.jdbc.Driver
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/pcbuilder_catalog}
+    driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
@@ -18,7 +17,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.MariaDBDialect
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
 server:
-  port: 8080
+  address: 0.0.0.0
+  port: ${PORT:8080}
