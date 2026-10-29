@@ -12,7 +12,7 @@ and validating PC configurations.
 - Spring Security
 - Apache Kafka
 - Redis
-- MySQL
+- MariaDB
 - Maven
 
 ## Services
